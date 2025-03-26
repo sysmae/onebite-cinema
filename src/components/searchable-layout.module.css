@@ -1,0 +1,26 @@
+.searchBar {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.searchBar input {
+  flex: 1;
+  padding: 8px;
+  font-size: 16px;
+  background-color: transparent;
+  color: rgb(255, 255, 255);
+  border: 1px solid gray;
+}
+
+.searchBar button {
+  padding: 8px 16px;
+  background-color: gray;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.searchBar button:hover {
+  background-color: rgb(200, 0, 0);
+}
