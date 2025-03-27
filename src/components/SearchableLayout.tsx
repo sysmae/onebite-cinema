@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router'
 import { ReactNode, useEffect, useState } from 'react'
-import style from './searchable-layout.module.css'
 
 export default function SearchableLayout({
   children,
@@ -33,15 +32,21 @@ export default function SearchableLayout({
 
   return (
     <div>
-      <div className={style.searchBar}>
+      <div className="flex gap-2 my-5">
         <input
           type="text"
           value={search}
           onChange={onChangeSearch}
           onKeyDown={onKeyDown}
           placeholder="검색어를 입력하세요 ..."
+          className="flex-1 px-3 py-2 text-base text-white bg-transparent border border-gray-500 rounded"
         />
-        <button onClick={onSubmit}>검색</button>
+        <button
+          onClick={onSubmit}
+          className="px-4 py-2 text-white bg-gray-600 rounded hover:bg-red-600"
+        >
+          검색
+        </button>
       </div>
       {children}
     </div>

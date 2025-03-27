@@ -1,11 +1,33 @@
-import SearchableLayout from '@/components/searchable-layout'
+import SearchableLayout from '@/components/SearchableLayout'
 import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
+import movies from '@/mock/movies.json'
+import MovieItem from '@/components/MovieItem'
 
 const Page = () => {
   const router = useRouter()
   const { q } = router.query
-  return <div className="font-bold">검색 결과 : {q}</div>
+
+  // 검색어와 일치하는 영화 필터링
+  const filteredMovies = movies.filter(
+    (movie) => movie.title.includes(q as string)
+    // || movie.description.includes(q as string)
+  )
+
+  return (
+    <div>
+      <h1 className="font-bold text-xl mb-4">검색 결과: {q}</h1>
+      {filteredMovies.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredMovies.map((movie) => (
+            <MovieItem key={movie.id} {...movie} />
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-500">검색 결과가 없습니다.</p>
+      )}
+    </div>
+  )
 }
 
 export default Page
