@@ -1,17 +1,39 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import movies from '@/mock/movies.json'
 import type { MovieData } from '@/types'
+import { GetServerSidePropsContext, InferGetStaticPropsType } from 'next'
+import fetchOneMovie from '@/lib/fetch-one-movie'
 
-const Page = () => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const id = context.params!.id
+  if (!id) {
+    return {
+      notFound: true,
+    }
+  }
+  // 서버사이드에서 영화 데이터 가져오기
+  const movie = await fetchOneMovie(Number(id))
+  return {
+    props: { movie },
+  }
+}
+
+const Page = ({
+  movie,
+}: InferGetStaticPropsType<typeof getServerSideProps>) => {
   const router = useRouter()
   const { id } = router.query
-
-  // ID에 해당하는 영화 데이터 찾기
-  const movie = movies.find((movie) => movie.id === Number(id)) as
-    | MovieData
-    | undefined
-
+  // id가 없는 경우 처리
+  if (!id) {
+    return (
+      <div className="text-center text-gray-500">
+        영화 ID를 찾을 수 없습니다.
+      </div>
+    )
+  }
+  // 영화 데이터가 없는 경우 처리
   if (!movie) {
     return (
       <div className="text-center text-gray-500">영화를 찾을 수 없습니다.</div>
