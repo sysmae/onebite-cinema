@@ -20,7 +20,7 @@ export default async function fetchOneMovie(
     const data = await response.json()
     return data
   } catch (error) {
-    console.error('Error fetching movie:', error)
+    // console.error('Error fetching movie:', error)
     return null // Return null or handle the error as needed
   }
 }

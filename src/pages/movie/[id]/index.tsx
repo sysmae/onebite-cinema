@@ -1,13 +1,14 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import type { MovieData } from '@/types'
+// import type { MovieData } from '@/types'
 import {
-  GetServerSidePropsContext,
+  // GetServerSidePropsContext,
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from 'next'
 import fetchOneMovie from '@/lib/fetch-one-movie'
 import fetchMovies from '@/lib/fetch-movies'
+import Head from 'next/head'
 
 // export const getServerSideProps = async (
 //   context: GetServerSidePropsContext
@@ -78,7 +79,22 @@ const Page = ({ movie }: InferGetStaticPropsType<typeof getStaticProps>) => {
   }
   // 영화 데이터가 로딩 중인 경우 처리
   if (router.isFallback) {
-    return <div className="text-center text-gray-500">로딩 중...</div>
+    return (
+      <>
+        <Head>
+          <title>Loading...</title>
+          <meta property="og:image" content="/thumbnail.png" />
+          <meta property="og:title" content="한입 시네마" />
+          <meta
+            property="og:description"
+            content="한입 시네마에 등록된 영화 설명들을 확인하세요"
+          />
+        </Head>
+        <div className="bg-black text-white min-h-screen flex items-center justify-center">
+          <div className="text-2xl font-bold">로딩중...</div>
+        </div>
+      </>
+    )
   }
   // 영화 데이터가 없는 경우 처리
   if (!movie) {
@@ -100,50 +116,58 @@ const Page = ({ movie }: InferGetStaticPropsType<typeof getStaticProps>) => {
   } = movie
 
   return (
-    <div className="bg-black text-white min-h-screen">
-      {/* 영화 정보 컨테이너 */}
-      <div className="max-w-6xl mx-auto p-4 relative">
-        {/* 포스터 섹션 */}
-        <div className="relative mb-6">
-          {/* 배경 포스터 (흐릿하게) */}
-          <div className="absolute inset-0 overflow-hidden">
-            <div
-              className="w-full h-full blur-sm opacity-30"
-              style={{
-                backgroundImage: `url(${posterImgUrl})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'blur(8px)',
-              }}
-            ></div>
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta property="og:image" content={posterImgUrl} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+      </Head>
+      <div className="bg-black text-white min-h-screen">
+        {/* 영화 정보 컨테이너 */}
+        <div className="max-w-6xl mx-auto p-4 relative">
+          {/* 포스터 섹션 */}
+          <div className="relative mb-6">
+            {/* 배경 포스터 (흐릿하게) */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div
+                className="w-full h-full blur-sm opacity-30"
+                style={{
+                  backgroundImage: `url(${posterImgUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  filter: 'blur(8px)',
+                }}
+              ></div>
+            </div>
+
+            {/* 메인 포스터 */}
+            <div className="flex justify-center items-center py-10 relative z-10">
+              <img
+                src={posterImgUrl}
+                alt={title}
+                className="h-96 shadow-2xl"
+                style={{ boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)' }}
+              />
+            </div>
           </div>
 
-          {/* 메인 포스터 */}
-          <div className="flex justify-center items-center py-10 relative z-10">
-            <img
-              src={posterImgUrl}
-              alt={title}
-              className="h-96 shadow-2xl"
-              style={{ boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)' }}
-            />
+          {/* 영화 제목 및 기본 정보 */}
+          <h1 className="text-3xl font-bold mb-1">{title}</h1>
+          <div className="text-sm text-gray-400 mb-6">
+            {releaseDate} / {genres.join(', ')} / {runtime}분
+            <br />
+            {company}
           </div>
-        </div>
 
-        {/* 영화 제목 및 기본 정보 */}
-        <h1 className="text-3xl font-bold mb-1">{title}</h1>
-        <div className="text-sm text-gray-400 mb-6">
-          {releaseDate} / {genres.join(', ')} / {runtime}분
-          <br />
-          {company}
-        </div>
-
-        {/* 영화 설명 */}
-        <div className="mb-8">
-          <p className="text-lg font-bold mb-3">{subTitle}</p>
-          <p className="text-gray-300 leading-relaxed">{description}</p>
+          {/* 영화 설명 */}
+          <div className="mb-8">
+            <p className="text-lg font-bold mb-3">{subTitle}</p>
+            <p className="text-gray-300 leading-relaxed">{description}</p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

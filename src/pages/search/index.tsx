@@ -2,14 +2,15 @@ import SearchableLayout from '@/components/SearchableLayout'
 import { useRouter } from 'next/router'
 import { ReactNode, useEffect, useState } from 'react'
 import MovieItem from '@/components/MovieItem'
-import {
-  GetServerSidePropsContext,
-  GetStaticPropsContext,
-  InferGetServerSidePropsType,
-  InferGetStaticPropsType,
-} from 'next'
+// import {
+//   GetServerSidePropsContext,
+//   GetStaticPropsContext,
+//   InferGetServerSidePropsType,
+//   InferGetStaticPropsType,
+// } from 'next'
 import fetchMovies from '@/lib/fetch-movies'
 import { MovieData } from '@/types'
+import Head from 'next/head'
 
 // 기존 SSR 방식
 // export const getServerSideProps = async (
@@ -50,6 +51,15 @@ const Page = () => {
 
   return (
     <div>
+      <Head>
+        <title>한입 시네마 - 검색결과</title>
+        <meta property="og:image" content="/thumbnail.png" />
+        <meta property="og:title" content="한입 시네마 - 검색결과" />
+        <meta
+          property="og:description"
+          content="한입 시네마에 등록된 영화 설명들을 확인하세요"
+        />
+      </Head>
       <h1 className="font-bold text-xl mb-4">검색 결과: {q}</h1>
       {filteredMovies.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

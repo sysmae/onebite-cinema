@@ -22,7 +22,7 @@ export default async function fetchMovies(q?: string): Promise<MovieData[]> {
     const data = await response.json()
     return data
   } catch (error) {
-    console.error('Error fetching movies:', error)
+    // console.error('Error fetching movies:', error)
     return [] // Return an empty array or handle the error as needed
   }
 }
