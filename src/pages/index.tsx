@@ -2,10 +2,36 @@ import SearchableLayout from '@/components/SearchableLayout'
 import { ReactNode } from 'react'
 import MovieItem from '@/components/MovieItem'
 import fetchMovies from '@/lib/fetch-movies'
-import { InferGetServerSidePropsType } from 'next'
+import { InferGetStaticPropsType } from 'next'
 import fetchRandomMovies from '@/lib/fetch-random-movies'
 
-export const getServerSideProps = async () => {
+// SSR을 사용하여 서버에서 데이터를 가져옵니다.
+// export const getServerSideProps = async () => {
+//   try {
+//     const [allMovies, recoMovies] = await Promise.all([
+//       fetchMovies(),
+//       fetchRandomMovies(),
+//     ])
+//     return {
+//       props: {
+//         allMovies,
+//         recoMovies,
+//       },
+//     }
+//   } catch (error) {
+//     console.error('Error fetching movies:', error)
+//     return {
+//       props: {
+//         allMovies: [],
+//         recoMovies: [],
+//       },
+//     }
+//   }
+// }
+
+// SSG을 사용하여 정적 페이지를 생성합니다.
+export const getStaticProps = async () => {
+  console.log('인덱스 페이지')
   try {
     const [allMovies, recoMovies] = await Promise.all([
       fetchMovies(),
@@ -31,7 +57,8 @@ export const getServerSideProps = async () => {
 export default function Home({
   allMovies,
   recoMovies,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
+  // InferGetServerSidePropsType<typeof getServerSideProps>)
   return (
     <>
       {/* 3개의 MovieItem 컴포넌트 렌더링 */}

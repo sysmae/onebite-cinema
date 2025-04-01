@@ -1,26 +1,54 @@
 import SearchableLayout from '@/components/SearchableLayout'
 import { useRouter } from 'next/router'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import MovieItem from '@/components/MovieItem'
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
+import {
+  GetServerSidePropsContext,
+  GetStaticPropsContext,
+  InferGetServerSidePropsType,
+  InferGetStaticPropsType,
+} from 'next'
 import fetchMovies from '@/lib/fetch-movies'
+import { MovieData } from '@/types'
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  const { q } = context.query
-  const movies = await fetchMovies(q as string)
+// 기존 SSR 방식
+// export const getServerSideProps = async (
+//   context: GetServerSidePropsContext
+// ) => {
+//   const { q } = context.query
+//   const movies = await fetchMovies(q as string)
 
-  return {
-    props: { movies },
-  }
-}
+//   return {
+//     props: { movies },
+//   }
+// }
 
-const Page = ({
-  movies,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+// SSG 로 번경 하려고 해도 검색 결과는 빌드 타임에 알 수 없기 때문에 X
+// export const getStaticProps = async (context: GetStaticPropsContext) => {
+//   const { q } = context.query.q
+//   const movies = await fetchMovies(q as string)
+
+//   return {
+//     props: { movies },
+//   }
+// }
+
+// 검색 결과는 클라이언트 측에서 가져오도록 수정
+const Page = () => {
+  const [movies, setMovies] = useState<MovieData[]>([])
   const router = useRouter()
   const { q } = router.query
+
+  const fetchSearchResult = async () => {
+    const res = await fetchMovies(q as string)
+    setMovies(res)
+  }
+
+  useEffect(() => {
+    if (q) {
+      fetchSearchResult()
+    }
+  }, [q])
 
   // 검색어와 일치하는 영화 필터링
   const filteredMovies = movies.filter(

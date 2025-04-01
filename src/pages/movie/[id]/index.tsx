@@ -1,12 +1,32 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import type { MovieData } from '@/types'
-import { GetServerSidePropsContext, InferGetStaticPropsType } from 'next'
+import {
+  GetServerSidePropsContext,
+  GetStaticPropsContext,
+  InferGetStaticPropsType,
+} from 'next'
 import fetchOneMovie from '@/lib/fetch-one-movie'
+import fetchMovies from '@/lib/fetch-movies'
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
+// export const getServerSideProps = async (
+//   context: GetServerSidePropsContext
+// ) => {
+//   const id = context.params!.id
+//   if (!id) {
+//     return {
+//       notFound: true,
+//     }
+//   }
+//   // 서버사이드에서 영화 데이터 가져오기
+//   const movie = await fetchOneMovie(Number(id))
+//   return {
+//     props: { movie },
+//   }
+// }
+
+// SSG 방식으로 수정
+export const getStaticProps = async (context: GetStaticPropsContext) => {
   const id = context.params!.id
   if (!id) {
     return {
@@ -15,14 +35,37 @@ export const getServerSideProps = async (
   }
   // 서버사이드에서 영화 데이터 가져오기
   const movie = await fetchOneMovie(Number(id))
+  // 영화 데이터가 없는 경우 처리
+  if (!movie) {
+    return {
+      notFound: true,
+    }
+  }
+  // 영화 데이터가 있는 경우 처리
   return {
     props: { movie },
   }
 }
 
-const Page = ({
-  movie,
-}: InferGetStaticPropsType<typeof getServerSideProps>) => {
+export const getStaticPaths = async () => {
+  // 모든 영화 데이터 가져오기
+  const movies = await fetchMovies()
+  // 영화 ID를 기반으로 경로 생성
+  const paths = movies.map((movie) => ({
+    params: { id: movie.id.toString() },
+  }))
+  // SSG를 사용하여 정적 페이지를 생성하기 위한 경로 반환
+
+  return {
+    paths,
+    fallback: true,
+    // false: 'blocking' 페이지가 없을 경우 서버에서 데이터를 가져옴
+    // fallback: false, // 페이지가 없을 경우 404 에러 발생
+    // fallback: true, // 페이지가 없을 경우 클라이언트에서 데이터를 가져옴. 일단 Props 없는 페이지 반환 한 다음, Props 계산 한 다음 데이터 있는 상태의 페이지 렌더링
+  }
+}
+
+const Page = ({ movie }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const router = useRouter()
   const { id } = router.query
   // id가 없는 경우 처리
@@ -32,6 +75,10 @@ const Page = ({
         영화 ID를 찾을 수 없습니다.
       </div>
     )
+  }
+  // 영화 데이터가 로딩 중인 경우 처리
+  if (router.isFallback) {
+    return <div className="text-center text-gray-500">로딩 중...</div>
   }
   // 영화 데이터가 없는 경우 처리
   if (!movie) {
