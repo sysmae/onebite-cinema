@@ -1,7 +1,7 @@
 import { MovieData } from '@/types'
 
 export default async function fetchRandomMovies(): Promise<MovieData[]> {
-  const url = `http://localhost:12345/movie/random` // Mock API URL
+  const url = `https://onebite-cinema-api-main-sand.vercel.app/movie/random` // Mock API URL
 
   try {
     const response = await fetch(url, {
