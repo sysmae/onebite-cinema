@@ -24,14 +24,6 @@ import { MovieData } from '@/types'
 // }
 
 // SSG 로 번경 하려고 해도 검색 결과는 빌드 타임에 알 수 없기 때문에 X
-// export const getStaticProps = async (context: GetStaticPropsContext) => {
-//   const { q } = context.query.q
-//   const movies = await fetchMovies(q as string)
-
-//   return {
-//     props: { movies },
-//   }
-// }
 
 // 검색 결과는 클라이언트 측에서 가져오도록 수정
 const Page = () => {
